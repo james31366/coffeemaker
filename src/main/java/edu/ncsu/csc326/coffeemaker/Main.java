@@ -23,7 +23,7 @@ import edu.ncsu.csc326.coffeemaker.exceptions.RecipeException;
 /**
  * @author Sarah Heckman
  * <p>
- * Starts the console UI for the CoffeeMaker
+ * Starts the console UI for the Coffee Maker
  */
 public class Main {
     private static CoffeeMaker coffeeMaker;
