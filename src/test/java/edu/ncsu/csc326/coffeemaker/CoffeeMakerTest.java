@@ -131,6 +131,9 @@ public class CoffeeMakerTest {
 
     /**
      * The Recipe's name cannot be blank if blank it shouldn't be added to list.
+     *
+     * @throws RecipeException if there was an error parsing the ingredient
+     *                         amount when setting up the recipe.
      */
     @Test
     public void testAddBlankNameRecipe() throws RecipeException {
@@ -141,7 +144,8 @@ public class CoffeeMakerTest {
     /**
      * Check delete recipe function that work correctly or not.
      *
-     * @throws RecipeException Exception for Recipe Class
+     * @throws RecipeException if there was an error parsing the ingredient
+     *                         amount when setting up the recipe.
      */
     @Test
     public void testDeleteRecipe() throws RecipeException {
@@ -152,7 +156,7 @@ public class CoffeeMakerTest {
     }
 
     /**
-     * Delete the null recipe.
+     * The delete function cannot delete the null recipe
      */
     @Test
     public void testDeleteNullRecipe() {
@@ -160,7 +164,7 @@ public class CoffeeMakerTest {
     }
 
     /**
-     * Delete the recipe that input value of recipeToDelete is negative number.
+     * Check delete function should throw the exception to catch the ArrayIndexOutOfRange When input the negative number.
      *
      * @throws RecipeException Exception for Recipe Class
      */
@@ -170,7 +174,7 @@ public class CoffeeMakerTest {
     }
 
     /**
-     * Delete the recipe that input value of recipeToDelete is not in list.
+     * Check delete function should throw the exception to catch the ArrayIndexOutOfRange When input the out of range number.
      */
     @Test
     public void testDeleteRecipeNotInList() {
@@ -180,7 +184,8 @@ public class CoffeeMakerTest {
     /**
      * Check edit recipe function with normal way.
      *
-     * @throws RecipeException Exception for Recipe class.
+     * @throws RecipeException if there was an error parsing the ingredient
+     *                         amount when setting up the recipe.
      */
     @Test
     public void testEditRecipe() throws RecipeException {
@@ -193,9 +198,10 @@ public class CoffeeMakerTest {
     }
 
     /**
-     * Edit the recipe that input value of recipeToEdit as NegativeNumber.
+     * Check edit function should throw the exception to catch the ArrayIndexOutOfRange When input the negative number.
      *
-     * @throws RecipeException Exception for Recipe class.
+     * @throws RecipeException if there was an error parsing the ingredient
+     *                         amount when setting up the recipe.
      */
     @Test
     public void testEditNegativeArrayRecipe() throws RecipeException {
@@ -204,9 +210,10 @@ public class CoffeeMakerTest {
     }
 
     /**
-     * Edit the recipe that input value of recipeToEdit is not in List.
+     * Check edit function should throw the exception to catch the ArrayIndexOutOfRange When input the out of range number.
      *
-     * @throws RecipeException Exception for Recipe class.
+     * @throws RecipeException if there was an error parsing the ingredient
+     *                         amount when setting up the recipe.
      */
     @Test
     public void testEditRecipeNotInList() throws RecipeException {
@@ -238,7 +245,7 @@ public class CoffeeMakerTest {
     }
 
     /**
-     * Add the Negative Coffee amount into add Inventory function.
+     * Test the negative to the ingredient value in the add inventory function
      */
     @Test
     public void testAddNegativeIngredientToInventory() {
@@ -288,6 +295,9 @@ public class CoffeeMakerTest {
         });
     }
 
+    /**
+     * Test the check inventory function in the normal way to use it
+     */
     @Test
     public void testCheckInventory() {
         StringBuffer buf = createStringBuffer(15, 15, 15, 15);
@@ -306,6 +316,9 @@ public class CoffeeMakerTest {
         assertEquals(25, coffeeMaker.makeCoffee(0, 75));
     }
 
+    /**
+     * Test the make coffee function and check the inventory that ingredient is reduced after making coffee
+     */
     @Test
     public void testPurchaseBeverageWithInventory() {
         coffeeMaker.addRecipe(recipe1);
@@ -315,6 +328,9 @@ public class CoffeeMakerTest {
         assertEquals(buf.toString(), coffeeMaker.checkInventory());
     }
 
+    /**
+     * Test the make coffee function with the null recipe in recipeToPurchase
+     */
     @Test
     public void testPurchaseBeverageWithNullRecipe() {
         assertThrows(InventoryException.class, () -> {
@@ -322,6 +338,12 @@ public class CoffeeMakerTest {
         });
     }
 
+    /**
+     * Test the make coffee function that recipe is consumed more ingredient than the inventory
+     *
+     * @throws RecipeException if there was an error parsing the ingredient
+     *                         amount when setting up the recipe.
+     */
     @Test
     public void testPurchaseBeverageWithNotEnoughIngredient() throws RecipeException {
         Recipe blackCoffee = createRecipe("Black Coffee", "16", "16", "16", "16", "50");
@@ -329,6 +351,9 @@ public class CoffeeMakerTest {
         assertEquals(100, coffeeMaker.makeCoffee(0, 100));
     }
 
+    /**
+     * Test the make coffee function that customer not have enough money to buy the coffee.
+     */
     @Test
     public void testPurchaseBeverageWithNotEnoughMoney() {
         coffeeMaker.addRecipe(recipe1);
