@@ -289,7 +289,7 @@ public class CoffeeMakerTest {
     }
 
     @Test
-    public void testCheckInventoryToInventory() {
+    public void testCheckInventory() {
         StringBuffer buf = createStringBuffer(15, 15, 15, 15);
         assertEquals(buf.toString(), coffeeMaker.checkInventory());
     }
