@@ -344,7 +344,7 @@ public class CoffeeMakerTest {
     @Test
     public void testPurchaseBeverage() {
         // Stub the data
-        Recipe[] recipeArray = new Recipe[]{recipe1, null, null, null};
+        Recipe[] recipeArray = new Recipe[]{recipe1, null, null};
         buf = createStringBuffer(12, 14, 14, 15);
 
         // Behavior
@@ -362,7 +362,7 @@ public class CoffeeMakerTest {
     @Test
     public void testPurchaseBeverageWithInventory() {
         // Stub the data
-        Recipe[] recipeArray = new Recipe[]{recipe1, null, null, null};
+        Recipe[] recipeArray = new Recipe[]{recipe1, null, null};
         buf = createStringBuffer(12, 14, 14, 15);
 
         // Behavior
@@ -382,14 +382,14 @@ public class CoffeeMakerTest {
     @Test
     public void testPurchaseBeverageWithNullRecipe() {
         // Stub the data
-        Recipe[] recipeArray = new Recipe[4];
+        Recipe[] recipeArray = new Recipe[3];
 
         // Behavior
         when(stubRecipeBook.getRecipes()).thenReturn(recipeArray);
 
-        assertEquals(75, mockCoffeeMaker.makeCoffee(3, 75));
+        assertEquals(75, mockCoffeeMaker.makeCoffee(0, 75));
 
-        verify(stubRecipeBook, times(1)).getRecipes();
+        verify(stubRecipeBook).getRecipes();
     }
 
     /**
@@ -402,7 +402,7 @@ public class CoffeeMakerTest {
     public void testPurchaseBeverageWithNotEnoughIngredient() throws RecipeException {
         // Stub the data
         Recipe blackCoffeeRecipe = createRecipe("Black Coffee", "16", "16", "16", "16", "50");
-        Recipe[] recipeArray = new Recipe[]{blackCoffeeRecipe, null, null, null};
+        Recipe[] recipeArray = new Recipe[]{blackCoffeeRecipe, null, null};
 
         // Behavior
         when(stubRecipeBook.getRecipes()).thenReturn(recipeArray);
@@ -418,7 +418,7 @@ public class CoffeeMakerTest {
     @Test
     public void testPurchaseBeverageWithNotEnoughMoney() {
         // Stub the data
-        Recipe[] recipeArray = new Recipe[]{recipe1, null, null, null};
+        Recipe[] recipeArray = new Recipe[]{recipe1, null, null};
 
         // Behavior
         when(stubRecipeBook.getRecipes()).thenReturn(recipeArray);
