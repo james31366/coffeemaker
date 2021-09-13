@@ -18,19 +18,16 @@
  */
 package edu.ncsu.csc326.coffeemaker;
 
-import static edu.ncsu.csc326.coffeemaker.Main.checkInventory;
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
-
+import edu.ncsu.csc326.coffeemaker.exceptions.InventoryException;
+import edu.ncsu.csc326.coffeemaker.exceptions.RecipeException;
 import org.junit.Before;
 import org.junit.Test;
 
-import edu.ncsu.csc326.coffeemaker.exceptions.InventoryException;
-import edu.ncsu.csc326.coffeemaker.exceptions.RecipeException;
-import org.mockito.internal.matchers.Null;
-
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 /**
  * Unit tests for CoffeeMaker class.
@@ -42,6 +39,10 @@ public class CoffeeMakerTest {
     //Used to capture the System.out
     private final PrintStream standardOut = System.out;
     private final ByteArrayOutputStream outputStreamCaptor = new ByteArrayOutputStream();
+    Recipe[] recipeArray;
+    StringBuffer buf;
+    int recipeToPurchase;
+    int amtPaid;
     /**
      * The object under test.
      */
@@ -51,7 +52,22 @@ public class CoffeeMakerTest {
     private Recipe recipe2;
     private Recipe recipe3;
     private Recipe recipe4;
+    private RecipeBook mockRecipeBook;
+    private CoffeeMaker coffeeMakerStub;
 
+    /**
+     * Help the tester create recipe easier.
+     *
+     * @param name         Name of the recipe
+     * @param amtChocolate amount of chocolate in recipe
+     * @param amtCoffee    amount of coffee in recipe
+     * @param amtMilk      amount of milk in recipe
+     * @param amtSugar     amount of sugar in recipe
+     * @param price        price of recipe
+     * @return The recipe that you need to create.
+     * @throws RecipeException if there was an error parsing the ingredient
+     *                         amount when setting up the recipe.
+     */
     private static Recipe createRecipe(String name, String amtChocolate, String amtCoffee, String amtMilk, String amtSugar, String price) throws RecipeException {
         Recipe recipe = new Recipe();
         recipe.setName(name);
@@ -64,6 +80,15 @@ public class CoffeeMakerTest {
         return recipe;
     }
 
+    /**
+     * Create the String Buffer easier for check the toString of Inventory
+     *
+     * @param amtCoffee    amount of coffee in recipe
+     * @param amtMilk      amount of milk in recipe
+     * @param amtSugar     amount of sugar in recipe
+     * @param amtChocolate amount of chocolate in recipe
+     * @return StringBuffer
+     */
     private static StringBuffer createStringBuffer(int amtCoffee, int amtMilk, int amtSugar, int amtChocolate) {
         StringBuffer buf = new StringBuffer();
         buf.append("Coffee: ");
@@ -106,6 +131,13 @@ public class CoffeeMakerTest {
 
         //Set up for r4
         recipe4 = createRecipe("Hot Chocolate", "4", "0", "1", "1", "65");
+
+        // Dummy the RecipeBook Class
+        mockRecipeBook = mock(RecipeBook.class);
+
+        // Stub the Coffee Maker class
+        Inventory inventory = new Inventory();
+        coffeeMakerStub = new CoffeeMaker(mockRecipeBook, inventory);
     }
 
 
@@ -312,8 +344,17 @@ public class CoffeeMakerTest {
      */
     @Test
     public void testPurchaseBeverage() {
-        coffeeMaker.addRecipe(recipe1);
-        assertEquals(25, coffeeMaker.makeCoffee(0, 75));
+        // Stub the data
+        Recipe[] recipeArray = new Recipe[]{recipe1, null, null, null};
+        buf = createStringBuffer(12, 14, 14, 15);
+
+        // Behavior
+        when(mockRecipeBook.getRecipes()).thenReturn(recipeArray);
+
+        assertEquals(25, coffeeMakerStub.makeCoffee(0, 75));
+
+        verify(mockRecipeBook, times(4)).getRecipes();
+
     }
 
     /**
@@ -321,11 +362,19 @@ public class CoffeeMakerTest {
      */
     @Test
     public void testPurchaseBeverageWithInventory() {
-        coffeeMaker.addRecipe(recipe1);
+        // Stub the data
+        Recipe[] recipeArray = new Recipe[]{recipe1, null, null, null};
+        buf = createStringBuffer(12, 14, 14, 15);
+
+        // Behavior
+        when(mockRecipeBook.getRecipes()).thenReturn(recipeArray);
+
         assertEquals(25, coffeeMaker.makeCoffee(0, 75));
 
         StringBuffer buf = createStringBuffer(12, 14, 14, 15);
         assertEquals(buf.toString(), coffeeMaker.checkInventory());
+
+        verify(mockRecipeBook, times(4)).getRecipes();
     }
 
     /**
@@ -333,9 +382,15 @@ public class CoffeeMakerTest {
      */
     @Test
     public void testPurchaseBeverageWithNullRecipe() {
-        assertThrows(InventoryException.class, () -> {
-            coffeeMaker.makeCoffee(3, 75);
-        });
+        // Stub the data
+        Recipe[] recipeArray = new Recipe[4];
+
+        // Behavior
+        when(mockRecipeBook.getRecipes()).thenReturn(recipeArray);
+
+        assertEquals(75, coffeeMakerStub.makeCoffee(3, 75));
+
+        verify(mockRecipeBook, times(1)).getRecipes();
     }
 
     /**
@@ -346,9 +401,16 @@ public class CoffeeMakerTest {
      */
     @Test
     public void testPurchaseBeverageWithNotEnoughIngredient() throws RecipeException {
-        Recipe blackCoffee = createRecipe("Black Coffee", "16", "16", "16", "16", "50");
-        coffeeMaker.addRecipe(blackCoffee);
-        assertEquals(100, coffeeMaker.makeCoffee(0, 100));
+        // Stub the data
+        Recipe blackCoffeeRecipe = createRecipe("Black Coffee", "16", "16", "16", "16", "50");
+        Recipe[] recipeArray = new Recipe[]{blackCoffeeRecipe, null, null, null};
+
+        // Behavior
+        when(mockRecipeBook.getRecipes()).thenReturn(recipeArray);
+
+        assertEquals(100, coffeeMakerStub.makeCoffee(0, 100));
+
+        verify(mockRecipeBook, times(3)).getRecipes();
     }
 
     /**
@@ -356,9 +418,14 @@ public class CoffeeMakerTest {
      */
     @Test
     public void testPurchaseBeverageWithNotEnoughMoney() {
-        coffeeMaker.addRecipe(recipe1);
-        assertEquals(1, coffeeMaker.makeCoffee(0, 1));
+        // Stub the data
+        Recipe[] recipeArray = new Recipe[]{recipe1, null, null, null};
+
+        // Behavior
+        when(mockRecipeBook.getRecipes()).thenReturn(recipeArray);
+
+        assertEquals(1, coffeeMakerStub.makeCoffee(0, 1));
+
+        verify(mockRecipeBook, times(2)).getRecipes();
     }
-
-
 }
