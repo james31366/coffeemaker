@@ -52,8 +52,8 @@ public class CoffeeMakerTest {
     private Recipe recipe2;
     private Recipe recipe3;
     private Recipe recipe4;
-    private RecipeBook mockRecipeBook;
-    private CoffeeMaker coffeeMakerStub;
+    private RecipeBook stubRecipeBook;
+    private CoffeeMaker mockCoffeeMaker;
 
     /**
      * Help the tester create recipe easier.
@@ -133,11 +133,11 @@ public class CoffeeMakerTest {
         recipe4 = createRecipe("Hot Chocolate", "4", "0", "1", "1", "65");
 
         // Dummy the RecipeBook Class
-        mockRecipeBook = mock(RecipeBook.class);
+        stubRecipeBook = mock(RecipeBook.class);
 
         // Stub the Coffee Maker class
         Inventory inventory = new Inventory();
-        coffeeMakerStub = new CoffeeMaker(mockRecipeBook, inventory);
+        mockCoffeeMaker = new CoffeeMaker(stubRecipeBook, inventory);
     }
 
 
@@ -198,10 +198,9 @@ public class CoffeeMakerTest {
     /**
      * Check delete function should throw the exception to catch the ArrayIndexOutOfRange When input the negative number.
      *
-     * @throws RecipeException Exception for Recipe Class
      */
     @Test
-    public void testDeleteNegativeArrayRecipe() throws RecipeException {
+    public void testDeleteNegativeArrayRecipe() {
         assertThrows(RecipeException.class, () -> coffeeMaker.deleteRecipe(-1));
     }
 
@@ -349,11 +348,11 @@ public class CoffeeMakerTest {
         buf = createStringBuffer(12, 14, 14, 15);
 
         // Behavior
-        when(mockRecipeBook.getRecipes()).thenReturn(recipeArray);
+        when(stubRecipeBook.getRecipes()).thenReturn(recipeArray);
 
-        assertEquals(25, coffeeMakerStub.makeCoffee(0, 75));
+        assertEquals(25, mockCoffeeMaker.makeCoffee(0, 75));
 
-        verify(mockRecipeBook, times(4)).getRecipes();
+        verify(stubRecipeBook, times(4)).getRecipes();
 
     }
 
@@ -367,14 +366,14 @@ public class CoffeeMakerTest {
         buf = createStringBuffer(12, 14, 14, 15);
 
         // Behavior
-        when(mockRecipeBook.getRecipes()).thenReturn(recipeArray);
+        when(stubRecipeBook.getRecipes()).thenReturn(recipeArray);
 
         assertEquals(25, coffeeMaker.makeCoffee(0, 75));
+        verify(stubRecipeBook, times(4)).getRecipes();
 
         StringBuffer buf = createStringBuffer(12, 14, 14, 15);
         assertEquals(buf.toString(), coffeeMaker.checkInventory());
 
-        verify(mockRecipeBook, times(4)).getRecipes();
     }
 
     /**
@@ -386,11 +385,11 @@ public class CoffeeMakerTest {
         Recipe[] recipeArray = new Recipe[4];
 
         // Behavior
-        when(mockRecipeBook.getRecipes()).thenReturn(recipeArray);
+        when(stubRecipeBook.getRecipes()).thenReturn(recipeArray);
 
-        assertEquals(75, coffeeMakerStub.makeCoffee(3, 75));
+        assertEquals(75, mockCoffeeMaker.makeCoffee(3, 75));
 
-        verify(mockRecipeBook, times(1)).getRecipes();
+        verify(stubRecipeBook, times(1)).getRecipes();
     }
 
     /**
@@ -406,11 +405,11 @@ public class CoffeeMakerTest {
         Recipe[] recipeArray = new Recipe[]{blackCoffeeRecipe, null, null, null};
 
         // Behavior
-        when(mockRecipeBook.getRecipes()).thenReturn(recipeArray);
+        when(stubRecipeBook.getRecipes()).thenReturn(recipeArray);
 
-        assertEquals(100, coffeeMakerStub.makeCoffee(0, 100));
+        assertEquals(100, mockCoffeeMaker.makeCoffee(0, 100));
 
-        verify(mockRecipeBook, times(3)).getRecipes();
+        verify(stubRecipeBook, times(3)).getRecipes();
     }
 
     /**
@@ -422,10 +421,10 @@ public class CoffeeMakerTest {
         Recipe[] recipeArray = new Recipe[]{recipe1, null, null, null};
 
         // Behavior
-        when(mockRecipeBook.getRecipes()).thenReturn(recipeArray);
+        when(stubRecipeBook.getRecipes()).thenReturn(recipeArray);
 
-        assertEquals(1, coffeeMakerStub.makeCoffee(0, 1));
+        assertEquals(1, mockCoffeeMaker.makeCoffee(0, 1));
 
-        verify(mockRecipeBook, times(2)).getRecipes();
+        verify(stubRecipeBook, times(2)).getRecipes();
     }
 }
