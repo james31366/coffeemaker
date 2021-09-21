@@ -39,10 +39,7 @@ public class CoffeeMakerTest {
     //Used to capture the System.out
     private final PrintStream standardOut = System.out;
     private final ByteArrayOutputStream outputStreamCaptor = new ByteArrayOutputStream();
-    Recipe[] recipeArray;
     StringBuffer buf;
-    int recipeToPurchase;
-    int amtPaid;
     /**
      * The object under test.
      */
@@ -197,7 +194,6 @@ public class CoffeeMakerTest {
 
     /**
      * Check delete function should throw the exception to catch the ArrayIndexOutOfRange When input the negative number.
-     *
      */
     @Test
     public void testDeleteNegativeArrayRecipe() {

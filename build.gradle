@@ -29,6 +29,22 @@ repositories {
     mavenCentral()
 }
 
+test {
+    testLogging.showStandardStreams = true
+}
+
+dependencies {
+    // Use JUnit test framework
+    testImplementation 'junit:junit:4.13.2'
+
+    // Use mockito
+    testImplementation "org.mockito:mockito-core:3.+"
+
+    // Use Cucumber
+    testImplementation 'io.cucumber:cucumber-java:6.11.0'
+    testImplementation 'io.cucumber:cucumber-junit:6.11.0'
+}
+
 jacoco {
     toolVersion = "0.8.7"
 }
@@ -41,17 +57,19 @@ jacocoTestReport {
     }
 }
 
-test {
-    testLogging.showStandardStreams = true
+configurations {
+    cucumberRuntime {
+        extendsFrom testImplementation
+    }
 }
 
-dependencies {
-    // Use JUnit test framework
-    testImplementation 'junit:junit:4.13.2'
-
-    // Use mockito
-    testImplementation "org.mockito:mockito-core:3.+"
-    // Deprecated.  Use testImplementation.
-//    testCompile 'junit:junit:4.12'
+task cucumber() {
+    dependsOn assemble, testClasses, jacocoTestReport
+    doLast {
+        javaexec {
+            main = "io.cucumber.core.cli.Main"
+            classpath = configurations.cucumberRuntime + sourceSets.main.output + sourceSets.test.output
+            args = ['--plugin', 'pretty', '--glue', 'edu.ncsu.csc326.coffeemaker', 'src/test/resources']
+        }
+    }
 }
-
