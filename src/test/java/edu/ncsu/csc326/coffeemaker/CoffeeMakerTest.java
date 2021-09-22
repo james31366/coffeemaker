@@ -181,7 +181,7 @@ public class CoffeeMakerTest {
         CoffeeMaker tmpCoffeeMaker = new CoffeeMaker();
         Recipe tmpRecipe = createRecipe("Latte", "0", "3", "1", "1", "50");
         assertTrue(tmpCoffeeMaker.addRecipe(tmpRecipe));
-        assertEquals(tmpCoffeeMaker.deleteRecipe(0), "Latte");
+        assertEquals("Latte", tmpCoffeeMaker.deleteRecipe(0));
     }
 
     /**
